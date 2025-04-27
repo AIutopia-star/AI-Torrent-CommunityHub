@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block title %}Home - AI Model Share{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Parallax -->
+<section class="hero-section position-relative overflow-hidden">
+    <div class="parallax-bg" data-depth="0.2"></div>
+    <div class="container position-relative py-5" style="z-index: 2;">
+        <div class="row min-vh-100 align-items-center">
+            <div class="col-lg-7" data-aos="fade-right">
+                <h1 class="display-3 fw-bold mb-4">Share & Discover AI Models</h1>
+                <p class="lead mb-4">An open, community-driven platform for sharing AI image generation models. Free, open-source, and powered by the community.</p>
+                <div class="d-flex gap-3">
+                    <a href="#features" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center" data-aos="fade-up">
+                <h2 class="display-5 fw-bold mb-3">Why Choose Our Platform</h2>
+                <p class="lead text-muted">A community-driven approach to AI model sharing</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-primary bg-gradient mb-4">
+                            <i class="fas fa-lock-open text-white"></i>
+                        </div>
+                        <h3 class="h4">Open & Free</h3>
+                        <p class="text-muted">Completely open-source and free to use. No paywalls, just community-driven sharing.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-success bg-gradient mb-4">
+                            <i class="fas fa-shield-alt text-white"></i>
+                        </div>
+                        <h3 class="h4">Safety First</h3>
+                        <p class="text-muted">Community-vetted models with safety ratings to ensure responsible usage.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-info bg-gradient mb-4">
+                            <i class="fas fa-bolt text-white"></i>
+                        </div>
+                        <h3 class="h4">Fast Sharing</h3>
+                        <p class="text-muted">Torrent-based distribution ensures fast downloads and reduces server costs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Models Section -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center" data-aos="fade-up">
+                <h2 class="display-5 fw-bold mb-3">Trending Models</h2>
+                <p class="lead text-muted">Check out what the community is excited about</p>
+            </div>
+        </div>
+        
+        <div class="row g-4" id="model-cards">
+            <!-- Model cards will be populated here via JavaScript -->
+        </div>
+        
+        <div class="text-center mt-5" data-aos="fade-up">
+        </div>
+    </div>
+</section>
+
+<!-- Community Section with Parallax -->
+<section class="community-section position-relative overflow-hidden py-5">
+    <div class="parallax-bg" data-depth="0.3"></div>
+    <div class="container position-relative py-5" style="z-index: 2;">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h2 class="display-5 fw-bold mb-4 text-white">Join Our Growing Community</h2>
+                <p class="lead text-white-50 mb-4">Connect with other AI enthusiasts, share your creations, and collaborate on new projects.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="btn btn-light btn-lg px-4">Sign Up</a>
+                    <a href="#" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="community-stats bg-white p-4 rounded-3 shadow">
+                    <div class="row text-center">
+                        <div class="col-6 mb-4">
+                            <div class="display-4 fw-bold text-primary">1,200+</div>
+                            <div class="text-muted">Models Shared</div>
+                        </div>
+                        <div class="col-6 mb-4">
+                            <div class="display-4 fw-bold text-primary">5,000+</div>
+                            <div class="text-muted">Community Members</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="display-4 fw-bold text-primary">100%</div>
+                            <div class="text-muted">Open Source</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="display-4 fw-bold text-primary">$0</div>
+                            <div class="text-muted">Cost to Use</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center" data-aos="fade-up">
+                <h2 class="display-5 fw-bold mb-3">How It Works</h2>
+                <p class="lead text-muted">Simple steps to share and discover AI models</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card h-100 border-0 bg-transparent">
+                    <div class="card-body p-4 text-center">
+                        <div class="step-number bg-primary bg-gradient text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4">1</div>
+                        <h3 class="h4">Upload Your Model</h3>
+                        <p class="text-muted">Create a torrent file for your AI model and upload it with metadata and sample images.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card h-100 border-0 bg-transparent">
+                    <div class="card-body p-4 text-center">
+                        <div class="step-number bg-primary bg-gradient text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4">2</div>
+                        <h3 class="h4">Community Review</h3>
+                        <p class="text-muted">The community can rate, review, and provide feedback on your model.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="card h-100 border-0 bg-transparent">
+                    <div class="card-body p-4 text-center">
+                        <div class="step-number bg-primary bg-gradient text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4">3</div>
+                        <h3 class="h4">Share & Collaborate</h3>
+                        <p class="text-muted">Others can download your model via torrent and collaborate on improvements.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container py-5 text-center" data-aos="zoom-in">
+        <h2 class="display-5 fw-bold mb-4">Ready to Get Started?</h2>
+        <p class="lead mb-5">Join our community today and start sharing or discovering amazing AI models.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="#" class="btn btn-light btn-lg px-4">Sign Up Free</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
