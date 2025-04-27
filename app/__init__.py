@@ -1,20 +1,23 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-
-db = SQLAlchemy()
-migrate = Migrate()
+from .db import db
+from config import config
 
 
-def create_app(config_class='config'):
+def create_app(config_name='default'):
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(config[config_name])
 
-    # db.init_app(app)
-    # migrate.init_app(app, db)
+    # 鍒濆鍖栨暟鎹簱杩炴帴
+    @app.before_request
+    def before_request():
+        db.connect()
 
-    # 修改这里 - 使用绝对导入
-    from app.routes import bp as main_bp
+    @app.teardown_request
+    def teardown_request(exception):
+        db.close()
+
+    # 娉ㄥ唽钃濆浘
+    from .routes import bp as main_bp
     app.register_blueprint(main_bp)
 
     return app
