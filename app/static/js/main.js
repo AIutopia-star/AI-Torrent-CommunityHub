@@ -115,20 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
 //        });
 //    });
 //}
- // Animate model cards sequentially
-gsap.utils.toArray(".model-card").forEach((card, i) => {
-    gsap.from(card, {
-        opacity: 0,
-        y: 30,
-        duration: 0.5,
-        delay: i * 0.1,
-        scrollTrigger: {
-            trigger: card,
-            start: "top 80%",
-            toggleActions: "play none none none"
-        }
-    });
-});
+
 // 导航栏滚动效果
 window.addEventListener('scroll', function() {
     const navbar = document.querySelector('.navbar');
