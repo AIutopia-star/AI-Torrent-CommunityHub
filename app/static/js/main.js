@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Load sample models
-    loadSampleModels();
+    //    loadSampleModels();
 
     // Scroll animations
     gsap.utils.toArray(".fade-in").forEach((section, i) => {
@@ -128,23 +128,31 @@ window.addEventListener('scroll', function() {
 
 // 登录/注册模态框切换
 document.addEventListener('DOMContentLoaded', function() {
+    // 获取模态框实例
+    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+    const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+
     // 从登录切换到注册
     document.querySelectorAll('[data-bs-target="#registerModal"]').forEach(btn => {
         btn.addEventListener('click', function() {
-            const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-            loginModal.hide();
-            const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
-            registerModal.show();
+            if (loginModal) {
+                loginModal.hide();
+            }
+            if (registerModal) {
+                registerModal.show();
+            }
         });
     });
 
     // 从注册切换到登录
     document.querySelectorAll('[data-bs-target="#loginModal"]').forEach(btn => {
         btn.addEventListener('click', function() {
-            const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
-            registerModal.hide();
-            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-            loginModal.show();
+            if (registerModal) {
+                registerModal.hide();
+            }
+            if (loginModal) {
+                loginModal.show();
+            }
         });
     });
 });
