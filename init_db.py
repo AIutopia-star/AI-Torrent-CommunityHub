@@ -48,8 +48,10 @@ def init_database():
                 download_count INT DEFAULT 0,
                 view_count INT DEFAULT 0,
                 user_id INT NOT NULL,
+                username VARCHAR(50),
                 torrent_file VARCHAR(200) NOT NULL,
                 magnet_link VARCHAR(500),
+                model_img TEXT,
                 file_size BIGINT,
                 FOREIGN KEY (user_id) REFERENCES user(id),
                 INDEX idx_name (name),
@@ -58,6 +60,25 @@ def init_database():
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
             """)
 
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS tag (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL UNIQUE,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            """)
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS model_tags (
+                    model_id INT NOT NULL,
+                    tag_id INT NOT NULL,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (model_id, tag_id),
+                    FOREIGN KEY (model_id) REFERENCES ai_model(id) ON DELETE CASCADE,
+                    FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            """)
             # 创建其他表...
 
         conn.commit()

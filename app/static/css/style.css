@@ -104,6 +104,82 @@ body {
     right: 10px;
 }
 
+/* 导航栏样式 */
+.navbar {
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0.75rem 0;
+}
+
+.navbar.scrolled {
+    background-color: rgba(33, 37, 41, 0.9) !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 1rem;
+    right: 1rem;
+    height: 2px;
+    background-color: var(--primary);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    transform: scaleX(1);
+}
+
+/* 下拉菜单 */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 模态框样式 */
+.modal-content {
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.modal-header {
+    border-bottom: 1px solid #2d3748;
+}
+
+/* 页脚样式 */
+footer a {
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+footer a:hover {
+    color: var(--primary) !important;
+}
+
+.social-icons a {
+    transition: transform 0.2s ease;
+}
+
+.social-icons a:hover {
+    transform: translateY(-3px);
+    color: var(--primary) !important;
+}
+
+
 /* Animations */
 @keyframes float {
     0% { transform: translateY(0px); }
@@ -115,7 +191,81 @@ body {
     animation: float 3s ease-in-out infinite;
 }
 
-/* Responsive Adjustments */
+/* 模型卡片 */
+.model-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.model-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.model-img {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.model-card:hover .model-img {
+    transform: scale(1.03);
+}
+
+/* 评分星星 */
+.rating {
+    color: #ffc107;
+}
+
+/* 标签 */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+/* 分页 */
+.pagination .page-item.active .page-link {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.pagination .page-link {
+    color: var(--primary);
+}
+
+/* 详情页样式 */
+.review-item {
+    padding-bottom: 1rem;
+}
+
+.progress {
+    background-color: #f0f0f0;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .model-img {
+        height: 150px;
+    }
+}
+
+/* 响应式调整 */
+@media (max-width: 992px) {
+    .navbar-collapse {
+        background-color: rgba(33, 37, 41, 0.95);
+        padding: 1rem;
+        margin-top: 0.5rem;
+        border-radius: 0.5rem;
+    }
+
+    .nav-link::after {
+        display: none;
+    }
+}
+
 @media (max-width: 768px) {
     .display-3 {
         font-size: 2.5rem;

@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% block title %}{{ model.name }} - AI Model Share{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- 左侧模型信息 -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h1 class="h2">{{ model.name }}</h1>
+                        <p class="lead">{{ model.description }}</p>
+                        
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            {% for tag in model.tags %}
+                            <a href="{{ url_for('main.models', tag=tag) }}" class="badge bg-secondary">{{ tag }}</a>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-user me-2"></i>
+                                    <span>Uploaded by <strong>{{ model.username }}</strong></span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-calendar me-2"></i>
+                                    <span>Released on <strong>{{ model.upload_date.strftime('%B %d, %Y') }}</strong></span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-download me-2"></i>
+                                    <span><strong>{{ model.download_count }}</strong> downloads</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-tag me-2"></i>
+                                    <span>License: <strong>{{ model.license }}</strong></span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-code-branch me-2"></i>
+                                    <span>Version: <strong>{{ model.version }}</strong></span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-database me-2"></i>
+                                    <span>Size: <strong>{{ (model.file_size / 1024 / 1024 / 1024)|round(1) }} GB</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex mb-4">
+                            <a href="#" class="btn btn-primary btn-lg px-4 me-md-2">
+                                <i class="fas fa-download me-1"></i> Download Torrent
+                            </a>
+                            <a href="#" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="fas fa-magnet me-1"></i> Magnet Link
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 模型图片展示 -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 mb-3">Example Outputs</h2>
+                        <div class="row g-3">
+                            {% for i in range(4) %}
+                            <div class="col-md-6">
+                                <img src="https://via.placeholder.com/600x400/6c5ce7/ffffff?text=Example+{{ loop.index }}" 
+                                     class="img-fluid rounded" alt="Example output {{ loop.index }}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 模型详情 -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 mb-3">Model Details</h2>
+                        <div class="mb-3">
+                            <h3 class="h5">Recommended Settings</h3>
+                            <pre class="bg-light p-3 rounded"><code>Steps: 50
+Sampler: Euler a
+CFG scale: 7
+Seed: -1
+Size: 512x512
+Model hash: fc2511737a</code></pre>
+                        </div>
+                        <div>
+                            <h3 class="h5">Training Information</h3>
+                            <p>This model was trained on a dataset of over 1 million high-quality images using 8x A100 GPUs for 2 weeks.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 评论区域 -->
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h4 mb-3">Community Reviews</h2>
+                        
+                        <!-- 评论表单 -->
+                        <div class="mb-4">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="reviewText" class="form-label">Your Review</label>
+                                    <textarea class="form-control" id="reviewText" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Rating</label>
+                                    <div class="rating-stars">
+                                        <i class="far fa-star fa-lg text-warning"></i>
+                                        <i class="far fa-star fa-lg text-warning"></i>
+                                        <i class="far fa-star fa-lg text-warning"></i>
+                                        <i class="far fa-star fa-lg text-warning"></i>
+                                        <i class="far fa-star fa-lg text-warning"></i>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                            </form>
+                        </div>
+                        
+                        <!-- 评论列表 -->
+                        <div class="review-list">
+                            {% for i in range(3) %}
+                            <div class="review-item mb-4 pb-4 border-bottom">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div>
+                                        <strong>User {{ loop.index }}</strong>
+                                        <div class="rating text-warning small">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star-half-alt"></i>
+                                            <span class="text-muted ms-1">(4.5)</span>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">2 days ago</small>
+                                </div>
+                                <p>This model produces amazing results! The colors are vibrant and the details are crisp. Highly recommended for fantasy artwork.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧边栏 -->
+            <div class="col-lg-4">
+                <!-- 下载信息 -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 mb-3">Download Information</h2>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Torrent File
+                                <a href="#" class="badge bg-primary rounded-pill">Download</a>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Magnet Link
+                                <a href="#" class="badge bg-primary rounded-pill">Copy</a>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                File Size
+                                <span class="text-muted">{{ (model.file_size / 1024 / 1024 / 1024)|round(1) }} GB</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Last Updated
+                                <span class="text-muted">{{ model.update_date.strftime('%B %d, %Y') }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 相关模型 -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 mb-3">Related Models</h2>
+                        {% for i in range(3) %}
+                        <div class="d-flex mb-3">
+                            <img src="https://via.placeholder.com/80x80/6c5ce7/ffffff?text=Model+{{ loop.index }}" 
+                                 class="rounded me-3" width="60" height="60" alt="Related model">
+                            <div>
+                                <h3 class="h6 mb-0">Related Model {{ loop.index }}</h3>
+                                <small class="text-muted">by User {{ loop.index }}</small>
+                                <div class="rating text-warning small">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <span class="text-muted ms-1">(4.0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- 统计信息 -->
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h4 mb-3">Statistics</h2>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Downloads</span>
+                                <span>{{ model.download_count }}</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ (model.download_count / 5000 * 100)|round(1) }}%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Views</span>
+                                <span>{{ model.view_count }}</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: {{ (model.view_count / 10000 * 100)|round(1) }}%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Rating</span>
+                                <span>4.5/5.0</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

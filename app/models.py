@@ -23,8 +23,10 @@ class AIModel:
     download_count: int
     view_count: int
     user_id: int
+    username: str
     torrent_file: str
     magnet_link: Optional[str]
+    model_img: str
     file_size: int
     tags: List[str] = None
 

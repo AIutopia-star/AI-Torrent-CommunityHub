@@ -11,6 +11,7 @@
                 <h1 class="display-3 fw-bold mb-4">Share & Discover AI Models</h1>
                 <p class="lead mb-4">An open, community-driven platform for sharing AI image generation models. Free, open-source, and powered by the community.</p>
                 <div class="d-flex gap-3">
+                    <a href="{{ url_for('main.models') }}" class="btn btn-primary btn-lg px-4">Browse Models</a>
                     <a href="#features" class="btn btn-outline-light btn-lg px-4">Learn More</a>
                 </div>
             </div>
@@ -80,9 +81,26 @@
         
         <div class="row g-4" id="model-cards">
             <!-- Model cards will be populated here via JavaScript -->
+            {% for model in popular_models %}
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ model.name }}</h5>
+                            <p class="card-text">{{ model.description }}</p>
+                            <p class="card-text"><small class="text-muted">Version: {{ model.version }}</small></p>
+                            <p class="card-text"><small class="text-muted">Downloads: {{ model.download_count }}</small></p>
+                            <p class="card-text"><small class="text-muted">Uploaded: {{ model.upload_date }}</small></p>
+                            <p class="card-text"><small class="text-muted">Updated: {{ model.update_date }}</small></p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('main.model_detail', model_id=model.id) }}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-        
         <div class="text-center mt-5" data-aos="fade-up">
+            <a href="{{ url_for('main.models') }}" class="btn btn-outline-primary btn-lg px-4">View All Models</a>
         </div>
     </div>
 </section>
@@ -177,6 +195,7 @@
         <p class="lead mb-5">Join our community today and start sharing or discovering amazing AI models.</p>
         <div class="d-flex justify-content-center gap-3">
             <a href="#" class="btn btn-light btn-lg px-4">Sign Up Free</a>
+            <a href="{{ url_for('main.about') }}" class="btn btn-outline-light btn-lg px-4">Learn More</a>
         </div>
     </div>
 </section>
