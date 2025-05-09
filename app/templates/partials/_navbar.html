@@ -18,7 +18,7 @@
                     <a class="nav-link" href="{{ url_for('main.models') }}">Models</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle" href="{{ url_for('main.index') }}" id="categoriesDropdown" role="button" data-bs-toggle="dropdown">
                         Categories
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark">
@@ -30,10 +30,10 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Community</a>
+                    <a class="nav-link" href="{{ url_for('main.index') }}">Community</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link" href="{{ url_for('main.index') }}">About</a>
                 </li>
             </ul>
 

@@ -112,6 +112,23 @@
                 });
             }
         });
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const currentPath = window.location.pathname;
+
+            navLinks.forEach(link => {
+                // 获取链接的绝对路径
+                const linkPath = new URL(link.href).pathname;
+
+                // 移除所有链接的 active 类
+                link.classList.remove('active');
+
+                // 如果当前路径与链接路径完全匹配，则添加 active 类
+                if (currentPath === linkPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
     </script>
 </body>
 </html>
