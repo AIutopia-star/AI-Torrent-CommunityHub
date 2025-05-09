@@ -15,6 +15,8 @@ user = Blueprint('user', __name__)
 
 @bp.route('/')
 def index():
+    login_form = LoginForm()
+    register_form = RegistrationForm()
     query = """
     SELECT * FROM ai_model 
     ORDER BY download_count DESC 
@@ -43,15 +45,16 @@ def index():
         )
         popular_models.append(model)
 
-        login_form = LoginForm()
-        register_form = RegistrationForm()
-
-    return render_template('index.html', popular_models=popular_models, login_form=login_form,
+    return render_template('index.html',
+                           popular_models=popular_models,
+                           login_form=login_form,
                            register_form=register_form)
 
 
 @bp.route('/models')
 def models():
+    login_form = LoginForm()
+    register_form = RegistrationForm()
     page = request.args.get('page', 1, type=int)
     per_page = 9
     search_query = request.args.get('q', '').strip()
@@ -147,12 +150,16 @@ def models():
         'models.html',
         models=models,
         all_tags=all_tags,
-        pagination=pagination
+        pagination=pagination,
+        login_form=login_form,
+        register_form=register_form
     )
 
 
 @bp.route('/model/<int:model_id>')
 def model_detail(model_id):
+    login_form = LoginForm()
+    register_form = RegistrationForm()
     # 获取模型详情
     query = """
     SELECT m.*, GROUP_CONCAT(t.name) as tags, u.username
@@ -191,7 +198,10 @@ def model_detail(model_id):
         tags=tags
     )
 
-    return render_template('model_detail.html', model=model)
+    return render_template('model_detail.html',
+                           model=model,
+                           login_form=login_form,
+                           register_form=register_form)
 
 
 @bp.route('/about')
