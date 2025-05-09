@@ -28,7 +28,15 @@ class Database:
 
     def close(self):
         if self.conn and self.conn.open:
-            self.conn.close()
+            try:
+                self.conn.close()
+                print("数据库连接已成功关闭")
+            except Exception as e:
+                print(f"关闭数据库连接时出错: {e}")
+            finally:
+                self.conn = None
+        else:
+            print("数据库连接已经关闭或未打开")
 
     def execute(self, query, args=None):
         conn = self.connect()

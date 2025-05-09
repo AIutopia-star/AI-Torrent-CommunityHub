@@ -31,5 +31,87 @@
     <script>
         AOS.init();
     </script>
+    <script>
+        // 处理登录表单提交
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: { 'Accept': 'application/json' }
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                // 关闭模态框
+                bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+
+                // 动态更新导航栏
+                const authState = document.querySelector('#auth-state');
+                authState.innerHTML = `
+                    <div class="dropdown">
+                        <a href="#" class="btn btn-outline-light dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i> ${data.user.username}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user-circle me-1"></i> Profile</a></li>
+                            ${data.user.is_admin ?
+                              '<li><a class="dropdown-item" href="/admin"><i class="fas fa-cog me-1"></i> Admin</a></li>' : ''}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                `;
+            }
+        });
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: { 'Accept': 'application/json' }
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                // 关闭模态框
+                bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+
+                // 动态更新导航栏
+                const authState = document.querySelector('#auth-state');
+                authState.innerHTML = `
+                    <div class="dropdown">
+                        <a href="#" class="btn btn-outline-light dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i> ${data.user.username}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user-circle me-1"></i> Profile</a></li>
+                            ${data.user.is_admin ?
+                              '<li><a class="dropdown-item" href="/admin"><i class="fas fa-cog me-1"></i> Admin</a></li>' : ''}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                `;
+            } else {
+                // 显示错误信息
+                Object.entries(data.errors).forEach(([field, messages]) => {
+                    const input = this.querySelector(`[name="${field}"]`);
+                    if (input) {
+                        const feedback = document.createElement('div');
+                        feedback.className = 'text-danger';
+                        feedback.textContent = messages.join(', ');
+
+                        const existingFeedback = input.nextElementSibling;
+                        if (existingFeedback && existingFeedback.className === 'text-danger') {
+                            existingFeedback.remove();
+                        }
+
+                        input.parentNode.insertBefore(feedback, input.nextSibling);
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

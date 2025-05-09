@@ -1,11 +1,16 @@
 from math import ceil
 
-from flask import Blueprint, render_template, request, abort
+from flask import Blueprint, render_template, request, abort, redirect, url_for, flash, jsonify
 from app.db import db
 from app.models import AIModel
-from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, logout_user, login_required, current_user
+import pymysql.cursors
+from .forms import LoginForm, RegistrationForm
 
 bp = Blueprint('main', __name__)
+auth = Blueprint('auth', __name__)
+user = Blueprint('user', __name__)
 
 
 @bp.route('/')
@@ -33,11 +38,16 @@ def index():
             username=row['username'],
             torrent_file=row['torrent_file'],
             magnet_link=row['magnet_link'],
+            model_img=row['model_img'],
             file_size=row['file_size']
         )
         popular_models.append(model)
 
-    return render_template('index.html', popular_models=popular_models)
+        login_form = LoginForm()
+        register_form = RegistrationForm()
+
+    return render_template('index.html', popular_models=popular_models, login_form=login_form,
+                           register_form=register_form)
 
 
 @bp.route('/models')
@@ -183,10 +193,116 @@ def model_detail(model_id):
 
     return render_template('model_detail.html', model=model)
 
+
 @bp.route('/about')
 def about():
     return render_template('about.html')
 
+
 @bp.route('/upload')
 def upload():
     return render_template('upload.html')
+
+
+@auth.route('/login', methods=['POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+
+        connection = pymysql.connect(host='localhost',
+                                     user='root',
+                                     password='fCfi;iKup5>N',
+                                     database='ai_torrent',
+                                     cursorclass=pymysql.cursors.DictCursor)
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM user WHERE email=%s"
+                cursor.execute(sql, (email,))
+                user_data = cursor.fetchone()
+
+                if user_data and check_password_hash(user_data['password_hash'], password):
+                    from app.models import User  # 延迟导入避免循环引用
+                    user = User(id=user_data['id'],
+                                username=user_data['username'],
+                                email=user_data['email'],
+                                is_admin=user_data['is_admin'])
+                    login_user(user, remember=form.remember.data)
+                    return jsonify({
+                        'success': True,
+                        'user': {
+                            'username': user.username,
+                            'is_admin': user.is_admin
+                        }})
+                else:
+                    return jsonify({'success': False, 'errors': {'email': ['Invalid email or password']}})
+        finally:
+            connection.close()
+    return jsonify({'success': False, 'errors': form.errors})
+
+
+@auth.route('/register', methods=['POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        print("提交注册")
+        username = form.username.data
+        email = form.email.data
+        password = generate_password_hash(form.password.data)
+
+        connection = pymysql.connect(host='localhost',
+                                     user='root',
+                                     password='fCfi;iKup5>N',
+                                     database='ai_torrent',
+                                     cursorclass=pymysql.cursors.DictCursor)
+        try:
+            with connection.cursor() as cursor:
+                print("插入用户数据")
+                try:
+                    print("插入用户数据")
+                    sql = """INSERT INTO user (username, email, password_hash, created_at, is_admin) 
+                              VALUES (%s, %s, %s, NOW(), %s)"""
+                    cursor.execute(sql, (username, email, password, False))
+                    connection.commit()
+                    print("用户数据插入成功")
+                except Exception as e:
+                    connection.rollback()
+                    print(f"用户数据插入失败: {e}")
+
+                # 自动登录新注册用户
+                sql = "SELECT * FROM user WHERE email=%s"
+                cursor.execute(sql, (email,))
+                user_data = cursor.fetchone()
+                from app.models import User
+                user = User(id=user_data['id'],
+                            username=user_data['username'],
+                            email=user_data['email'],
+                            is_admin=user_data['is_admin'])
+                login_user(user)
+                return jsonify({
+                    'success': True,
+                    'user': {
+                        'username': user.username,
+                        'is_admin': user.is_admin
+                    }})
+        except Exception as e:
+            connection.rollback()
+            return jsonify({'success': False, 'errors': {'database': ['Registration failed. Please try again.']}})
+        finally:
+            connection.close()
+    return jsonify({'success': False, 'errors': form.errors})
+
+
+@auth.route('/logout')
+def logout():
+    print("登出")
+    logout_user()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('main.index'))
+
+
+@user.route('/profile')
+@login_required
+def profile():
+    return render_template('user/profile.html', user=current_user)

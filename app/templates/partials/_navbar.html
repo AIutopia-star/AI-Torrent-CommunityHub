@@ -49,12 +49,31 @@
 
             <!-- 用户相关按钮 -->
             <div class="d-flex">
-                <a href="#" class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
-                    <i class="fas fa-sign-in-alt me-1"></i> Login
-                </a>
-                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
-                    <i class="fas fa-user-plus me-1"></i> Register
-                </a>
+                <!-- 在base.html中添加这段代码 -->
+                <div id="auth-state">
+                    {% if current_user.is_authenticated %}
+                        <div class="dropdown">
+                            <a href="#" class="btn btn-outline-light dropdown-toggle" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i> {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{{ url_for('user.profile') }}"><i class="fas fa-user-circle me-1"></i> Profile</a></li>
+                                {% if current_user.is_admin %}
+                                    <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}"><i class="fas fa-cog me-1"></i> Admin</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="#" class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="fas fa-sign-in-alt me-1"></i> Login
+                        </a>
+                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            <i class="fas fa-user-plus me-1"></i> Register
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -69,18 +88,25 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}">
+                    {{ login_form.hidden_tag() }}
                     <div class="mb-3">
-                        <label for="loginEmail" class="form-label">Email address</label>
-                        <input type="email" class="form-control bg-dark text-white border-secondary" id="loginEmail" required>
+                        {{ login_form.email.label(class="form-label") }}
+                        {{ login_form.email(class="form-control bg-dark text-white border-secondary") }}
+                        {% for error in login_form.email.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     <div class="mb-3">
-                        <label for="loginPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control bg-dark text-white border-secondary" id="loginPassword" required>
+                        {{ login_form.password.label(class="form-label") }}
+                        {{ login_form.password(class="form-control bg-dark text-white border-secondary") }}
+                        {% for error in login_form.password.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                        {{ login_form.remember(class="form-check-input") }}
+                        {{ login_form.remember.label(class="form-check-label") }}
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Login</button>
                 </form>
@@ -105,28 +131,44 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form id="registerForm" method="POST" action="{{ url_for('auth.register') }}">
+                    {{ register_form.hidden_tag() }}
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="registerUsername" class="form-label">Username</label>
-                            <input type="text" class="form-control bg-dark text-white border-secondary" id="registerUsername" required>
+                            {{ register_form.username.label(class="form-label") }}
+                            {{ register_form.username(class="form-control bg-dark text-white border-secondary") }}
+                            {% for error in register_form.username.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="registerEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control bg-dark text-white border-secondary" id="registerEmail" required>
+                            {{ register_form.email.label(class="form-label") }}
+                            {{ register_form.email(class="form-control bg-dark text-white border-secondary") }}
+                            {% for error in register_form.email.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="registerPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control bg-dark text-white border-secondary" id="registerPassword" required>
+                        {{ register_form.password.label(class="form-label") }}
+                        {{ register_form.password(class="form-control bg-dark text-white border-secondary") }}
+                        {% for error in register_form.password.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     <div class="mb-3">
-                        <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control bg-dark text-white border-secondary" id="registerConfirmPassword" required>
+                        {{ register_form.confirm_password.label(class="form-label") }}
+                        {{ register_form.confirm_password(class="form-control bg-dark text-white border-secondary") }}
+                        {% for error in register_form.confirm_password.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="agreeTerms" required>
-                        <label class="form-check-label" for="agreeTerms">I agree to the <a href="#" class="text-primary">Terms of Service</a></label>
+                        {{ register_form.agree_terms(class="form-check-input") }}
+                        {{ register_form.agree_terms.label(class="form-check-label") }}
+                        {% for error in register_form.agree_terms.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Register</button>
                 </form>
