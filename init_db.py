@@ -28,7 +28,7 @@ def init_database():
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 username VARCHAR(64) UNIQUE NOT NULL,
                 email VARCHAR(120) UNIQUE NOT NULL,
-                password_hash VARCHAR(128) NOT NULL,
+                password_hash VARCHAR(256) NOT NULL,
                 created_at DATETIME NOT NULL,
                 is_admin BOOLEAN DEFAULT FALSE,
                 INDEX idx_username (username),
