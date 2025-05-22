@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField, FileField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, Optional
 from app.models import User
 import pymysql.cursors
 
@@ -50,3 +50,13 @@ class RegistrationForm(FlaskForm):
                     raise ValidationError('Username already taken. Please choose a different one.')
         finally:
             connection.close()
+
+class ModelUploadForm(FlaskForm):
+    name = StringField('Model Name', validators=[DataRequired()], render_kw={"placeholder": "Model name"})
+    description = TextAreaField('Description', validators=[DataRequired()], render_kw={"rows": 3, "placeholder": "Detailed description of your model"})
+    version = StringField('Version', validators=[DataRequired()], render_kw={"placeholder": "1.0.0"})
+    license = SelectField('License', choices=[('MIT', 'MIT'), ('GPL', 'GPL'), ('Apache', 'Apache')], validators=[DataRequired()])
+    tags = StringField('Tags', validators=[Optional()], render_kw={"placeholder": "Add tags separated by commas"})
+    torrent_file = FileField('Torrent File', validators=[DataRequired()])
+    model_img = FileField('Model Image', validators=[Optional()])  # 添加图片上传字段
+    is_private = BooleanField('Private')

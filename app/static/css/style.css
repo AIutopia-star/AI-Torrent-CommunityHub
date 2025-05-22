@@ -12,6 +12,7 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--dark);
+    background-color: #f8f9fa; /* 柔和的灰色背景 */
     overflow-x: hidden;
 }
 
@@ -224,6 +225,10 @@ footer a:hover {
 .badge {
     font-weight: 500;
     padding: 0.35em 0.65em;
+}
+
+.bg-light {
+    background-color: #f8f9fa; /* 柔和的灰色背景 */
 }
 
 /* 分页 */

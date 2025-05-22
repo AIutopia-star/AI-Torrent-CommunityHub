@@ -1,12 +1,16 @@
+import uuid
+from datetime import datetime
+import os
 from math import ceil
-
-from flask import Blueprint, render_template, request, abort, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, abort, redirect, url_for, flash, jsonify, session, current_app
+from werkzeug.utils import secure_filename
 from app.db import db
 from app.models import AIModel
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 import pymysql.cursors
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, RegistrationForm, ModelUploadForm
+from .tool_func import generate_magnet_link, get_db_connection
 
 bp = Blueprint('main', __name__)
 auth = Blueprint('auth', __name__)
@@ -208,6 +212,10 @@ def model_detail(model_id):
 def about():
     return render_template('about.html')
 
+@bp.route('/upload_model')
+def upload_model():
+    return render_template('upload.html')
+
 
 @bp.route('/upload')
 def upload():
@@ -221,11 +229,7 @@ def login():
         email = form.email.data
         password = form.password.data
 
-        connection = pymysql.connect(host='localhost',
-                                     user='root',
-                                     password='fCfi;iKup5>N',
-                                     database='ai_torrent',
-                                     cursorclass=pymysql.cursors.DictCursor)
+        connection = get_db_connection()
         try:
             with connection.cursor() as cursor:
                 sql = "SELECT * FROM user WHERE email=%s"
@@ -239,6 +243,8 @@ def login():
                                 email=user_data['email'],
                                 is_admin=user_data['is_admin'])
                     login_user(user, remember=form.remember.data)
+                    session.permanent = True  # 使会话持久化
+                    print(f"Loaded user: {user_data}")
                     return jsonify({
                         'success': True,
                         'user': {
@@ -261,11 +267,7 @@ def register():
         email = form.email.data
         password = generate_password_hash(form.password.data)
 
-        connection = pymysql.connect(host='localhost',
-                                     user='root',
-                                     password='fCfi;iKup5>N',
-                                     database='ai_torrent',
-                                     cursorclass=pymysql.cursors.DictCursor)
+        connection = get_db_connection()
         try:
             with connection.cursor() as cursor:
                 print("插入用户数据")
@@ -315,4 +317,96 @@ def logout():
 @user.route('/profile')
 @login_required
 def profile():
-    return render_template('user/profile.html', user=current_user)
+    login_form = LoginForm()
+    register_form = RegistrationForm()
+    form = ModelUploadForm()
+    print(f"Current user: {current_user}")
+    return render_template('user/profile.html', user=current_user,
+                           login_form=login_form,
+                           register_form=register_form, form=form)
+
+@user.route('/upload_model', methods=['POST'])
+def upload_model():
+    form = ModelUploadForm()
+    if form.validate_on_submit():
+        # 获取表单数据
+        # id = str(uuid.uuid4())
+        name = form.name.data
+        description = form.description.data
+        version = form.version.data
+        license = form.license.data
+        tags = form.tags.data.split(',') if form.tags.data else []
+        torrent_file = form.torrent_file.data
+
+        is_private = form.is_private.data
+
+        # 获取当前用户信息
+        user_id = current_user.id
+        username = current_user.username
+
+        # 保存种子文件和图片到服务器
+        upload_folder = current_app.config['UPLOAD_FOLDER']
+        user_upload_folder = os.path.join(upload_folder, str(user_id))
+        os.makedirs(user_upload_folder, exist_ok=True)
+
+        # 创建种子文件和图片文件夹
+        torrent_folder = os.path.join(user_upload_folder, 'torrents')
+        image_folder = os.path.join(user_upload_folder, 'images')
+        os.makedirs(torrent_folder, exist_ok=True)
+        os.makedirs(image_folder, exist_ok=True)
+
+        # 保存种子文件
+        filename = secure_filename(torrent_file.filename)
+        timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+        filename = f"{timestamp}_{filename}"
+        torrent_file_path = os.path.join(torrent_folder, filename)
+        torrent_file.save(torrent_file_path)
+
+        # 保存图片文件（如果有的话）
+        model_img = form.model_img.data
+        if model_img:
+            img_filename = secure_filename(model_img.filename)
+            img_timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+            img_filename = f"{img_timestamp}_{img_filename}"
+            model_img_path = os.path.join(image_folder, img_filename)
+            model_img.save(model_img_path)
+        else:
+            model_img_path = 'default_model_img.jpg'  # 默认图片路径
+
+        # 生成系统字段
+        upload_date = datetime.utcnow()
+        update_date = datetime.utcnow()
+        download_count = 0
+        view_count = 0
+        file_size = os.path.getsize(torrent_file_path) # 假设文件已经保存到服务器
+        model_img = model_img_path  # 默认图片或用户上传的图片路径
+        magnet_link = generate_magnet_link(torrent_file_path)  # 假设有一个函数生成磁力链接
+
+        # 插入数据到数据库
+        connection = get_db_connection()
+        try:
+            with connection.cursor() as cursor:
+                sql = """
+                    INSERT INTO ai_model (name, description, version, license, upload_date, update_date, download_count, view_count, user_id, username, torrent_file, magnet_link, model_img, file_size, tag)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                cursor.execute(sql, (
+                    name, description, version, license, upload_date, update_date, download_count, view_count,
+                    user_id, username, torrent_file_path, magnet_link, model_img,
+                    file_size, ','.join(tags)
+                ))
+                connection.commit()
+                print("模型数据插入成功")
+        except Exception as e:
+            connection.rollback()
+            print(f"模型数据插入失败: {e}")
+        finally:
+            connection.close()
+        return redirect(url_for('user.success_page'))
+
+
+@user.route('/success')
+def success_page():
+    login_form = LoginForm()
+    register_form = RegistrationForm()
+    return render_template('success_page.html', login_form=login_form, register_form=register_form)

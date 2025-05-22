@@ -52,29 +52,34 @@ class ModelImage:
     is_primary: bool = False
 
 class User(UserMixin):
-    def __init__(self, id, username, email, is_admin=False):
+    def __init__(self, id, username, email,created_at, is_admin=False):
         self.id = id
         self.username = username
         self.email = email
+        self.created_at= created_at
         self.is_admin = is_admin
 
-@login_manager.user_loader
-def load_user(user_id):
-    connection = pymysql.connect(host='localhost',
-                                 user='root',
-                                 password='fCfi;iKup5>N',
-                                 database='ai_torrent',
-                                 cursorclass=pymysql.cursors.DictCursor)
-    try:
-        with connection.cursor() as cursor:
-            sql = "SELECT * FROM user WHERE id=%s"
-            cursor.execute(sql, (user_id,))
-            user_data = cursor.fetchone()
-            if user_data:
-                return User(id=user_data['id'],
-                          username=user_data['username'],
-                          email=user_data['email'],
-                          is_admin=user_data['is_admin'])
-    finally:
-        connection.close()
-    return None
+    def get_id(self):
+        return str(self.id)  # 确保返回字符串形式的用户 ID
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        connection = pymysql.connect(host='localhost',
+                                     user='root',
+                                     password='fCfi;iKup5>N',
+                                     database='ai_torrent',
+                                     cursorclass=pymysql.cursors.DictCursor)
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM user WHERE id=%s"
+                cursor.execute(sql, (user_id,))
+                user_data = cursor.fetchone()
+                if user_data:
+                    return User(id=user_data['id'],
+                              username=user_data['username'],
+                              email=user_data['email'],
+                              created_at=user_data['created_at'],
+                              is_admin=user_data['is_admin'])
+        finally:
+            connection.close()
+        return None

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="navbar-offset" style="height: 40px;"></div>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card bg-light border-success mb-4 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4>Upload Successful!</h4>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Your model has been successfully uploaded. Thank you for contributing to our community!</p>
+                    <p class="card-text">You can now:</p>
+                    <ul class="list-group list-group-flush">
+
+                        <li class="list-group-item">
+                            <a href="{{ url_for('main.index') }}" class="btn btn-outline-dark btn-block">Return to Home</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
