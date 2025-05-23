@@ -117,6 +117,7 @@ def models():
     models = []
     for row in paginated_results:
         tags = row['tags'].split(',') if row['tags'] else []
+
         model = AIModel(
             id=row['id'],
             name=row['name'],
@@ -136,7 +137,6 @@ def models():
             tags=tags
         )
         models.append(model)
-
     # 传递给模板的分页对象
     pagination = {
         'page': page,
@@ -235,12 +235,13 @@ def login():
                 sql = "SELECT * FROM user WHERE email=%s"
                 cursor.execute(sql, (email,))
                 user_data = cursor.fetchone()
-
+                created_at = datetime.utcnow()
                 if user_data and check_password_hash(user_data['password_hash'], password):
                     from app.models import User  # 延迟导入避免循环引用
                     user = User(id=user_data['id'],
                                 username=user_data['username'],
                                 email=user_data['email'],
+                                created_at = created_at,
                                 is_admin=user_data['is_admin'])
                     login_user(user, remember=form.remember.data)
                     session.permanent = True  # 使会话持久化
@@ -348,6 +349,7 @@ def upload_model():
         upload_folder = current_app.config['UPLOAD_FOLDER']
         user_upload_folder = os.path.join(upload_folder, str(user_id))
         os.makedirs(user_upload_folder, exist_ok=True)
+        STATIC_ROOT = os.path.join(current_app.root_path, 'static')
 
         # 创建种子文件和图片文件夹
         torrent_folder = os.path.join(user_upload_folder, 'torrents')
@@ -362,6 +364,9 @@ def upload_model():
         torrent_file_path = os.path.join(torrent_folder, filename)
         torrent_file.save(torrent_file_path)
 
+        # 处理 torrent_file 路径（同样方式）
+        torrent_file_relative = (os.path.relpath(torrent_file_path, start=STATIC_ROOT).replace('\\', '/'))
+
         # 保存图片文件（如果有的话）
         model_img = form.model_img.data
         if model_img:
@@ -373,14 +378,19 @@ def upload_model():
         else:
             model_img_path = 'default_model_img.jpg'  # 默认图片路径
 
+            # 处理 model_img 路径（去掉 static 前面的部分）
+        model_img_relative = (os.path.relpath(model_img_path, start=STATIC_ROOT).replace('\\', '/'))
+
         # 生成系统字段
         upload_date = datetime.utcnow()
         update_date = datetime.utcnow()
         download_count = 0
         view_count = 0
         file_size = os.path.getsize(torrent_file_path) # 假设文件已经保存到服务器
-        model_img = model_img_path  # 默认图片或用户上传的图片路径
+        model_img = model_img_relative  # 默认图片或用户上传的图片路径
         magnet_link = generate_magnet_link(torrent_file_path)  # 假设有一个函数生成磁力链接
+
+
 
         # 插入数据到数据库
         connection = get_db_connection()
@@ -392,7 +402,7 @@ def upload_model():
                 """
                 cursor.execute(sql, (
                     name, description, version, license, upload_date, update_date, download_count, view_count,
-                    user_id, username, torrent_file_path, magnet_link, model_img,
+                    user_id, username, torrent_file_relative, magnet_link, model_img,
                     file_size, ','.join(tags)
                 ))
                 connection.commit()

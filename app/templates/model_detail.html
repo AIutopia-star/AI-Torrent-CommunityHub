@@ -65,9 +65,9 @@
                     <div class="card-body">
                         <h2 class="h4 mb-3">Example Outputs</h2>
                         <div class="row g-3">
-                            {% for i in range(4) %}
+                            {% for i in range(1) %}
                             <div class="col-md-6">
-                                <img src="https://via.placeholder.com/600x400/6c5ce7/ffffff?text=Example+{{ loop.index }}" 
+                                <img src="{{ url_for('static', filename=model.model_img) }}"
                                      class="img-fluid rounded" alt="Example output {{ loop.index }}">
                             </div>
                             {% endfor %}
@@ -180,7 +180,7 @@ Model hash: fc2511737a</code></pre>
                         <h2 class="h4 mb-3">Related Models</h2>
                         {% for i in range(3) %}
                         <div class="d-flex mb-3">
-                            <img src="https://via.placeholder.com/80x80/6c5ce7/ffffff?text=Model+{{ loop.index }}" 
+                            <img src="{{ url_for('static', filename=model.model_img) }}"
                                  class="rounded me-3" width="60" height="60" alt="Related model">
                             <div>
                                 <h3 class="h6 mb-0">Related Model {{ loop.index }}</h3>

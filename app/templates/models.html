@@ -19,9 +19,9 @@
             </div>
             <div class="col-md-4">
                 <select class="form-select" id="sortSelect" onchange="window.location.href=updateQueryString('sort', this.value)">
-                    <option value="popular" {% if request.args.get('sort') == 'popular' %}selected{% endif %}>Most Popular</option>
-                    <option value="newest" {% if not request.args.get('sort') or request.args.get('sort') == 'newest' %}selected{% endif %}>Newest</option>
-                    <option value="downloads" {% if request.args.get('sort') == 'downloads' %}selected{% endif %}>Most Downloads</option>
+                    <option value="popular">Most Popular</option>
+                    <option value="newest" >Newest</option>
+                    <option value="downloads">Most Downloads</option>
                 </select>
             </div>
         </div>
@@ -54,7 +54,7 @@
             <div class="col-lg-4 col-md-6">
                 <div class="card model-card h-100">
                     <div class="position-relative">
-                        <img src="https://via.placeholder.com/600x400/6c5ce7/ffffff?text={{ model.name|urlencode }}" 
+                        <img src="{{ url_for('static', filename=model.model_img) }}"
                              class="card-img-top model-img" alt="{{ model.name }}">
                         <span class="badge bg-primary position-absolute top-0 end-0 m-2">
                             {{ model.license }}

@@ -11,10 +11,10 @@ from .models import User
 
 
 def create_app(config_name='default'):
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static')
     app.config.from_object(config[config_name])
     app.secret_key = '123456789JJKKLLLKKKKK'  # 应该是一个随机字符串
-    UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
+    UPLOAD_FOLDER = os.path.join(os.getcwd(), 'app\\static\\uploads')
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     # 初始化扩展
     login_manager = LoginManager()
